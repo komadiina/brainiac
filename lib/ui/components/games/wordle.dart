@@ -7,6 +7,8 @@ import 'package:mozgalica/services/wordle_service.dart';
 import 'package:mozgalica/util/util.dart';
 import 'package:mozgalica/util/wordle_guess.dart';
 
+import '../../../util/pipe/wordle_game_pipe.dart';
+
 
 class WordleGame extends StatefulWidget {
   const WordleGame({super.key, required this.maxAttempts});
@@ -79,6 +81,8 @@ class _WordleGameState extends State<WordleGame> {
         _refreshLetters(guesses.last, getGuess(guesses.last, 0));
         currentGuess = "";
       });
+    } else {
+      // shake current row
     }
   }
 
@@ -368,7 +372,7 @@ class _WordleGameState extends State<WordleGame> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                entry.key.toUpperCase(),
+                                WordleGamePipe.translate(context, entry.key.toUpperCase()),
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,

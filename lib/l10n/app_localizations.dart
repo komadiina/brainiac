@@ -319,6 +319,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nerdle'**
   String get nerdle;
+
+  /// No description provided for @yourTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Your turn!'**
+  String get yourTurn;
+
+  /// No description provided for @ticTacToeYouAre.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing as'**
+  String get ticTacToeYouAre;
+
+  /// No description provided for @gameMotto.
+  ///
+  /// In en, this message translates to:
+  /// **'A mini-game a day keeps the doctor away!'**
+  String get gameMotto;
+
+  /// No description provided for @gameMottoHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Try some of our hand-picked games for you!'**
+  String get gameMottoHeader;
+
+  /// No description provided for @youWon.
+  ///
+  /// In en, this message translates to:
+  /// **'You won!'**
+  String get youWon;
+
+  /// No description provided for @ticTacToeGameOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Game over.'**
+  String get ticTacToeGameOver;
+
+  /// No description provided for @ticTacToeCpuWon.
+  ///
+  /// In en, this message translates to:
+  /// **'CPU won... Really?'**
+  String get ticTacToeCpuWon;
+
+  /// No description provided for @correct.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct'**
+  String get correct;
+
+  /// No description provided for @present.
+  ///
+  /// In en, this message translates to:
+  /// **'Present'**
+  String get present;
+
+  /// No description provided for @absent.
+  ///
+  /// In en, this message translates to:
+  /// **'Absent'**
+  String get absent;
+
+  /// No description provided for @unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknown;
 }
 
 class _AppLocalizationsDelegate

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mozgalica/services/nerdle_service.dart';
+import 'package:mozgalica/state/config_state.dart';
 import 'package:mozgalica/util/wordle_guess.dart';
+import 'package:provider/provider.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../resources/configurations/variables.dart';
@@ -30,6 +32,13 @@ class _NerdleGameState extends State<NerdleGame> {
     "absent": {},
     "unknown": Set.of(numericSymbolList),
   };
+
+  bool widgetLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   final Future<List<String>> _fetchEquations = Future<List<String>>(() async {
     return await NerdleService.getEquations();
@@ -235,17 +244,29 @@ class _NerdleGameState extends State<NerdleGame> {
     );
   }
 
+  Future<void> fadeInWidget(Duration duration) async {
+    final fadeHelper = Future<void>.delayed(duration, () async {
+      if (!widgetLoaded) {
+        setState(() {
+          widgetLoaded = true;
+        });
+      }
+    });
+
+    Future.wait([fadeHelper]);
+  }
+
   @override
   Widget build(BuildContext context) {
     bool guessed = guesses.contains(answer);
     bool lost = guesses.length >= widget.maxAttempts;
     bool isGameOver = guessed || lost;
 
+    fadeInWidget(Provider.of<ConfigurationsState>(context).animationDuration);
+
     return FutureBuilder(
       future: _fetchEquations,
       builder: (context, asyncSnapshot) {
-        debugPrint(asyncSnapshot.toString());
-
         _focusNode.requestFocus();
         equationList = asyncSnapshot.data ?? [];
 
@@ -281,139 +302,190 @@ class _NerdleGameState extends State<NerdleGame> {
             child: SingleChildScrollView(
               child: OrientationBuilder(
                 builder: (context, orientation) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Text(
-                            AppLocalizations.of(context)!.mathQuizGameTitle,
-                            style: const TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      if (guesses.isNotEmpty)
-                        ...buildPreviousGuesses(
-                          orientation,
-                          absentColor: Theme.of(
-                            context,
-                          ).colorScheme.inversePrimary.withAlpha(100),
-                        ),
-
-                      if (!isGameOver && guesses.length < widget.maxAttempts)
-                        buildEmptyRow(
-                          Theme.of(context).colorScheme.inversePrimary,
-                          orientation,
-                        ),
-
-                      for (
-                        int i = guesses.length + 1;
-                        i < widget.maxAttempts;
-                        i++
-                      )
-                        Row(
+                  return Consumer<ConfigurationsState>(
+                    builder: (context, config, child) => AnimatedOpacity(
+                      duration: config.animationDuration,
+                      opacity: widgetLoaded == true ? 1.0 : 0.0,
+                      child: AnimatedScale(
+                        duration: config.animationDuration,
+                        scale: widgetLoaded == true
+                            ? config.endScale
+                            : config.beginScale,
+                        curve: Curves.easeInOut,
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                            wordLength,
-                            (_) => buildTile(
-                              '',
-                              orientation,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.inverseSurface.withAlpha(20),
-                            ),
-                          ),
-                        ),
-
-                      if (isGameOver)
-                        Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Center(
-                            child: Text(
-                              guesses.contains(answer)
-                                  ? AppLocalizations.of(context)!.youGuessedIt
-                                  : "${AppLocalizations.of(context)!.wordleGameOver}$answer",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                child: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.mathQuizGameTitle,
+                                  style: const TextStyle(
+                                    fontSize: 24.0,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
 
-                      Wrap(
-                        children: [
-                          ...'12345'
-                              .split('')
-                              .map(
-                                (number) => GestureDetector(
-                                  onTap: () {
-                                    _onSymbolInput(number);
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Chip(
-                                      backgroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .inverseSurface
-                                          .withAlpha(15),
-                                      padding: EdgeInsets.all(12),
-                                      label: Text(
-                                        number,
-                                        // textScaler: TextScaler.linear(1.5),
-                                        style: const TextStyle(fontSize: 24),
-                                      ),
-                                      visualDensity: VisualDensity.comfortable,
+                            if (guesses.isNotEmpty)
+                              ...buildPreviousGuesses(
+                                orientation,
+                                absentColor: Theme.of(
+                                  context,
+                                ).colorScheme.inversePrimary.withAlpha(100),
+                              ),
+
+                            if (!isGameOver &&
+                                guesses.length < widget.maxAttempts)
+                              buildEmptyRow(
+                                Theme.of(context).colorScheme.inversePrimary,
+                                orientation,
+                              ),
+
+                            for (
+                              int i = guesses.length + 1;
+                              i < widget.maxAttempts;
+                              i++
+                            )
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(
+                                  wordLength,
+                                  (_) => buildTile(
+                                    '',
+                                    orientation,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.inverseSurface.withAlpha(20),
+                                  ),
+                                ),
+                              ),
+
+                            if (isGameOver)
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Center(
+                                  child: Text(
+                                    guesses.contains(answer)
+                                        ? AppLocalizations.of(
+                                            context,
+                                          )!.youGuessedIt
+                                        : "${AppLocalizations.of(context)!.wordleGameOver}$answer",
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
                               ),
-                        ],
-                      ),
 
-                      Wrap(
-                        children: [
-                          ...'67890'
-                              .split('')
-                              .map(
-                                (number) => GestureDetector(
-                                  onTap: () {
-                                    _onSymbolInput(number);
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Chip(
-                                      backgroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .inverseSurface
-                                          .withAlpha(15),
-                                      padding: EdgeInsets.all(12),
-                                      label: Text(
-                                        number,
-                                        // textScaler: TextScaler.linear(1.5),
-                                        style: const TextStyle(fontSize: 24),
+                            Wrap(
+                              children: [
+                                ...'12345'
+                                    .split('')
+                                    .map(
+                                      (number) => GestureDetector(
+                                        onTap: () {
+                                          _onSymbolInput(number);
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Chip(
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .inverseSurface
+                                                .withAlpha(15),
+                                            padding: EdgeInsets.all(12),
+                                            label: Text(
+                                              number,
+                                              // textScaler: TextScaler.linear(1.5),
+                                              style: const TextStyle(
+                                                fontSize: 24,
+                                              ),
+                                            ),
+                                            visualDensity:
+                                                VisualDensity.comfortable,
+                                          ),
+                                        ),
                                       ),
-                                      visualDensity: VisualDensity.comfortable,
                                     ),
-                                  ),
-                                ),
-                              ),
-                        ],
-                      ),
+                              ],
+                            ),
 
-                      Wrap(
-                        children: [
-                          ...'+-*/='
-                              .split('')
-                              .map(
-                                (number) => GestureDetector(
+                            Wrap(
+                              children: [
+                                ...'67890'
+                                    .split('')
+                                    .map(
+                                      (number) => GestureDetector(
+                                        onTap: () {
+                                          _onSymbolInput(number);
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Chip(
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .inverseSurface
+                                                .withAlpha(15),
+                                            padding: EdgeInsets.all(12),
+                                            label: Text(
+                                              number,
+                                              // textScaler: TextScaler.linear(1.5),
+                                              style: const TextStyle(
+                                                fontSize: 24,
+                                              ),
+                                            ),
+                                            visualDensity:
+                                                VisualDensity.comfortable,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                              ],
+                            ),
+
+                            Wrap(
+                              children: [
+                                ...'+-*/='
+                                    .split('')
+                                    .map(
+                                      (number) => GestureDetector(
+                                        onTap: () {
+                                          _onSymbolInput(number);
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Chip(
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .inverseSurface
+                                                .withAlpha(15),
+                                            padding: EdgeInsets.all(12),
+                                            label: Text(
+                                              number,
+                                              // textScaler: TextScaler.linear(2),
+                                              style: const TextStyle(
+                                                fontSize: 24,
+                                              ),
+                                            ),
+                                            visualDensity:
+                                                VisualDensity.comfortable,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                              ],
+                            ),
+
+                            Wrap(
+                              children: [
+                                GestureDetector(
                                   onTap: () {
-                                    _onSymbolInput(number);
+                                    _onCharacterDeleted();
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -424,7 +496,7 @@ class _NerdleGameState extends State<NerdleGame> {
                                           .withAlpha(15),
                                       padding: EdgeInsets.all(12),
                                       label: Text(
-                                        number,
+                                        "DELETE",
                                         // textScaler: TextScaler.linear(2),
                                         style: const TextStyle(fontSize: 24),
                                       ),
@@ -432,92 +504,68 @@ class _NerdleGameState extends State<NerdleGame> {
                                     ),
                                   ),
                                 ),
-                              ),
-                        ],
+
+                                GestureDetector(
+                                  onTap: () {
+                                    _onEnterPressed();
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Chip(
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface
+                                          .withAlpha(15),
+                                      padding: EdgeInsets.all(12),
+                                      label: Text(
+                                        "ENTER",
+                                        // textScaler: TextScaler.linear(2),
+                                        style: const TextStyle(fontSize: 24),
+                                      ),
+                                      visualDensity: VisualDensity.comfortable,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            // Column(
+                            //   crossAxisAlignment: CrossAxisAlignment.start,
+                            //   children: numberMap.entries.map((entry) {
+                            //     return Column(
+                            //       crossAxisAlignment: CrossAxisAlignment.start,
+                            //       children: [
+                            //         Text(
+                            //           entry.key.toUpperCase(),
+                            //           style: const TextStyle(
+                            //             fontSize: 18,
+                            //             fontWeight: FontWeight.bold,
+                            //           ),
+                            //         ),
+                            //         Wrap(
+                            //           spacing: 8,
+                            //           children: entry.value.map((letter) {
+                            //             return Chip(
+                            //               label: Text(
+                            //                 letter,
+                            //                 style: const TextStyle(
+                            //                   fontSize: 16,
+                            //                   fontWeight: FontWeight.bold,
+                            //                 ),
+                            //               ),
+                            //               backgroundColor: _getColor(entry.key),
+                            //             );
+                            //           }).toList(),
+                            //         ),
+                            //         const SizedBox(height: 16),
+                            //       ],
+                            //     );
+                            //   }).toList(),
+                            // ),
+                          ],
+                        ),
                       ),
-
-                      Wrap(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              _onCharacterDeleted();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Chip(
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .inverseSurface
-                                    .withAlpha(15),
-                                padding: EdgeInsets.all(12),
-                                label: Text(
-                                  "DELETE",
-                                  // textScaler: TextScaler.linear(2),
-                                  style: const TextStyle(fontSize: 24),
-                                ),
-                                visualDensity: VisualDensity.comfortable,
-                              ),
-                            ),
-                          ),
-
-                          GestureDetector(
-                            onTap: () {
-                              _onEnterPressed();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Chip(
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .inverseSurface
-                                    .withAlpha(15),
-                                padding: EdgeInsets.all(12),
-                                label: Text(
-                                  "ENTER",
-                                  // textScaler: TextScaler.linear(2),
-                                  style: const TextStyle(fontSize: 24),
-                                ),
-                                visualDensity: VisualDensity.comfortable,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-
-                      // Column(
-                      //   crossAxisAlignment: CrossAxisAlignment.start,
-                      //   children: numberMap.entries.map((entry) {
-                      //     return Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         Text(
-                      //           entry.key.toUpperCase(),
-                      //           style: const TextStyle(
-                      //             fontSize: 18,
-                      //             fontWeight: FontWeight.bold,
-                      //           ),
-                      //         ),
-                      //         Wrap(
-                      //           spacing: 8,
-                      //           children: entry.value.map((letter) {
-                      //             return Chip(
-                      //               label: Text(
-                      //                 letter,
-                      //                 style: const TextStyle(
-                      //                   fontSize: 16,
-                      //                   fontWeight: FontWeight.bold,
-                      //                 ),
-                      //               ),
-                      //               backgroundColor: _getColor(entry.key),
-                      //             );
-                      //           }).toList(),
-                      //         ),
-                      //         const SizedBox(height: 16),
-                      //       ],
-                      //     );
-                      //   }).toList(),
-                      // ),
-                    ],
+                    ),
                   );
                 },
               ),

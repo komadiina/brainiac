@@ -35,5 +35,16 @@
   "allGames": "All games",
   "tictactoe": "Tic-tac-toe",
   "wordle": "Wordle",
-  "nerdle": "Nerdle"
+  "nerdle": "Nerdle",
+  "yourTurn": "Your turn!",
+  "ticTacToeYouAre": "Playing as",
+  "gameMotto": "A mini-game a day keeps the doctor away!",
+  "gameMottoHeader": "Try some of our hand-picked games for you!",
+  "youWon": "You won!",
+  "ticTacToeGameOver": "Game over.",
+  "ticTacToeCpuWon": "CPU won... Really?",
+  "correct": "Correct",
+  "present": "Present",
+  "absent": "Absent",
+  "unknown": "Unknown"
 }

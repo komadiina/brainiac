@@ -1,3 +1,5 @@
+import 'dart:core';
+
 // ----- Database
 final String databaseTableName = "game_result";
 final String databaseName = "game_result.db";
@@ -11,6 +13,17 @@ final Duration durationInstant = Duration.zero;
 final Duration durationFast = const Duration(milliseconds: 150);
 final Duration durationNormal = const Duration(milliseconds: 225);
 final Duration durationSlow = const Duration(milliseconds: 300);
+
+// ----- Homepage
+final double cardFadeInDelayFactor = 0.33;
+final double cardFadeInFactor = 1.4;
+
+// ----- Wordle
+
+// ----- Tic-Tac-Toe
+
+// ----- Nerdle
+final double gameFadeInFactor = 1.15;
 
 
 // ----- Wordle

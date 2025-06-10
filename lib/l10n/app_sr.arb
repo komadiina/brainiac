@@ -32,5 +32,19 @@
   "usernameFilterHintText": "Igrač...",
   "scoreFilterHintText": "Rezultat...",
   "noDataToDisplay": "Nema podataka.",
-  "allGames": "Sve igre"
+  "allGames": "Sve igre",
+  "tictactoe": "Iks-oks",
+  "wordle": "Wordle",
+  "nerdle": "Matematičarko",
+  "yourTurn": "Tvoj potez!",
+  "ticTacToeYouAre": "Tvoj znak",
+  "gameMotto": "Savršen dok čekate da vam kafa prokuva.",
+  "gameMottoHeader": "Okušajte se u nekim od navedenih igara!",
+  "youWon": "Pobjeda!",
+  "ticTacToeGameOver": "Kraj igre.",
+  "ticTacToeCpuWon": "Protivnik je pobijedio... Zar stvarno?",
+  "correct": "Pogođeno",
+  "present": "Zamalo",
+  "absent": "Neuključeno",
+  "unknown": "Nepoznato"
 }

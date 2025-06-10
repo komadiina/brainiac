@@ -30,8 +30,8 @@ class _MozgalicaAppState extends State<MozgalicaApp> {
       builders: {
         TargetPlatform.android: CupertinoPageTransitionsBuilder(),
         TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-      }
-    )
+      },
+    ),
   );
   Locale appLocale = Locale('en');
   int currentPageIndex = 0;
@@ -63,9 +63,7 @@ class _MozgalicaAppState extends State<MozgalicaApp> {
   @override
   Widget build(BuildContext context) {
     List<Widget> pages = [
-      HomePage(
-        key: ValueKey(appLocale),
-      ),
+      HomePage(key: ValueKey(appLocale)),
       LeaderboardPage(key: ValueKey(appLocale)),
       SettingsPage(
         key: ValueKey(appLocale),
@@ -126,7 +124,9 @@ class _MozgalicaAppState extends State<MozgalicaApp> {
                 bottomNavigationBar: NavigationBar(
                   animationDuration: selectedDuration,
                   selectedIndex: currentPageIndex,
-                  indicatorColor: Colors.amber,
+                  indicatorColor: Theme.of(
+                    context,
+                  ).colorScheme.inverseSurface.withAlpha(50),
                   onDestinationSelected: (index) {
                     setState(() {
                       currentPageIndex = index;

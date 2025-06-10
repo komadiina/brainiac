@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mozgalica/db/database_singleton.dart';
+import 'package:mozgalica/state/config_state.dart';
 import 'package:mozgalica/ui/mozgalica_app.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:provider/provider.dart';
+// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // kreiranje instance pri pokretanju
-  sqfliteFfiInit();
+  // sqfliteFfiInit();
   await DatabaseSingleton().database;
 
   // await GameResultRepository.insertAll(db, [
@@ -28,9 +30,12 @@ void main() async {
     DeviceOrientation.landscapeRight,
   ]);
 
-  runApp(const MozgalicaApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ConfigurationsState()),
+      ],
+      child: const MozgalicaApp(),
+    ),
+  );
 }
-
-
-
-

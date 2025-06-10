@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mozgalica/resources/configurations/variables.dart';
 import 'package:mozgalica/l10n/app_localizations.dart';
+import 'package:mozgalica/state/config_state.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
@@ -111,50 +113,53 @@ class _SettingsPageState extends State<SettingsPage> {
                 style: TextStyle(fontSize: 18.0),
               ),
 
-              DropdownMenu(
-                initialSelection: widget.presetValues['duration'] as Duration,
-                leadingIcon: const Icon(Icons.animation),
-                dropdownMenuEntries: <DropdownMenuEntry>[
-                  DropdownMenuEntry(
-                    value: durationInstant,
-                    label: AppLocalizations.of(context)!.durationInstant,
-                    style: MenuItemButton.styleFrom(
-                      textStyle: TextStyle(
-                        fontSize: 16.0
-                      )
-                    )
-                  ),
-                  DropdownMenuEntry(
-                    value: durationFast,
-                    label: AppLocalizations.of(context)!.durationFast,
+              Consumer<ConfigurationsState>(
+                builder: (context, config, child) => DropdownMenu(
+                  // initialSelection: widget.presetValues['duration'] as Duration,
+                  initialSelection: config.animationDuration,
+                  leadingIcon: const Icon(Icons.animation),
+                  dropdownMenuEntries: <DropdownMenuEntry>[
+                    DropdownMenuEntry(
+                      value: durationInstant,
+                      label: AppLocalizations.of(context)!.durationInstant,
                       style: MenuItemButton.styleFrom(
-                          textStyle: TextStyle(
-                              fontSize: 16.0
-                          )
+                        textStyle: TextStyle(
+                          fontSize: 16.0
+                        )
                       )
-                  ),
-                  DropdownMenuEntry(
-                    value: durationNormal,
-                    label: AppLocalizations.of(context)!.durationNormal,
-                      style: MenuItemButton.styleFrom(
-                          textStyle: TextStyle(
-                              fontSize: 16.0
-                          )
-                      )
-                  ),
-                  DropdownMenuEntry(
-                    value: durationSlow,
-                    label: AppLocalizations.of(context)!.durationSlow,
-                      style: MenuItemButton.styleFrom(
-                          textStyle: TextStyle(
-                              fontSize: 16.0
-                          )
-                      )
-                  ),
-                ],
-                onSelected: (duration) {
-                  widget.onAnimationDurationChanged(duration);
-                },
+                    ),
+                    DropdownMenuEntry(
+                      value: durationFast,
+                      label: AppLocalizations.of(context)!.durationFast,
+                        style: MenuItemButton.styleFrom(
+                            textStyle: TextStyle(
+                                fontSize: 16.0
+                            )
+                        )
+                    ),
+                    DropdownMenuEntry(
+                      value: durationNormal,
+                      label: AppLocalizations.of(context)!.durationNormal,
+                        style: MenuItemButton.styleFrom(
+                            textStyle: TextStyle(
+                                fontSize: 16.0
+                            )
+                        )
+                    ),
+                    DropdownMenuEntry(
+                      value: durationSlow,
+                      label: AppLocalizations.of(context)!.durationSlow,
+                        style: MenuItemButton.styleFrom(
+                            textStyle: TextStyle(
+                                fontSize: 16.0
+                            )
+                        )
+                    ),
+                  ],
+                  onSelected: (duration) {
+                    config.updateDuration(duration);
+                  },
+                ),
               ),
             ],
           ),

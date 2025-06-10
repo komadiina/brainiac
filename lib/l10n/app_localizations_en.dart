@@ -119,4 +119,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nerdle => 'Nerdle';
+
+  @override
+  String get yourTurn => 'Your turn!';
+
+  @override
+  String get ticTacToeYouAre => 'Playing as';
+
+  @override
+  String get gameMotto => 'A mini-game a day keeps the doctor away!';
+
+  @override
+  String get gameMottoHeader => 'Try some of our hand-picked games for you!';
+
+  @override
+  String get youWon => 'You won!';
+
+  @override
+  String get ticTacToeGameOver => 'Game over.';
+
+  @override
+  String get ticTacToeCpuWon => 'CPU won... Really?';
+
+  @override
+  String get correct => 'Correct';
+
+  @override
+  String get present => 'Present';
+
+  @override
+  String get absent => 'Absent';
+
+  @override
+  String get unknown => 'Unknown';
 }

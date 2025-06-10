@@ -112,11 +112,44 @@ class AppLocalizationsSr extends AppLocalizations {
   String get allGames => 'Sve igre';
 
   @override
-  String get tictactoe => 'Tic-tac-toe';
+  String get tictactoe => 'Iks-oks';
 
   @override
   String get wordle => 'Wordle';
 
   @override
-  String get nerdle => 'Nerdle';
+  String get nerdle => 'Matematičarko';
+
+  @override
+  String get yourTurn => 'Tvoj potez!';
+
+  @override
+  String get ticTacToeYouAre => 'Tvoj znak';
+
+  @override
+  String get gameMotto => 'Savršen dok čekate da vam kafa prokuva.';
+
+  @override
+  String get gameMottoHeader => 'Okušajte se u nekim od navedenih igara!';
+
+  @override
+  String get youWon => 'Pobjeda!';
+
+  @override
+  String get ticTacToeGameOver => 'Kraj igre.';
+
+  @override
+  String get ticTacToeCpuWon => 'Protivnik je pobijedio... Zar stvarno?';
+
+  @override
+  String get correct => 'Pogođeno';
+
+  @override
+  String get present => 'Zamalo';
+
+  @override
+  String get absent => 'Neuključeno';
+
+  @override
+  String get unknown => 'Nepoznato';
 }
